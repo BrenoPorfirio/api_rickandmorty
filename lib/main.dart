@@ -1,50 +1,134 @@
 import 'package:flutter/material.dart';
-import 'package:api_rickandmorty/home/screens/ui/home.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class DataService {
+  final ValueNotifier<List<dynamic>> tableStateNotifier = ValueNotifier([]);
+
+  void carregar(int index) {
+    if (index == 1) {
+      carregarDados();
+    }
+  }
+
+  Future<void> carregarDados() async {
+    var characterUri = Uri(
+      scheme: 'https',
+      host: 'rickandmortyapi.com',
+      path: 'api/character',
+      queryParameters: {'size': '5'},
+    );
+    var jsonString = await http.read(characterUri);
+    var chaJson = jsonDecode(jsonString);
+    tableStateNotifier.value = chaJson['results'];
+  }
+}
+
+final dataService = DataService();
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "API RICK AND MORTY",
+      theme: ThemeData(primarySwatch: Colors.deepPurple),
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Dicas"),
+        ),
+        body: ValueListenableBuilder<List<dynamic>>(
+          valueListenable: dataService.tableStateNotifier,
+          builder: (_, value, __) {
+            return DataTableWidget(
+              jsonObjects: value,
+              propertyNames: ["name", "status", "species"],
+              columnNames: ["Nome", "Status", "Espécie"],
+            );
+          },
+        ),
+        bottomNavigationBar:
+            NewNavBar(itemSelectedCallback: dataService.carregar),
       ),
-      home: const Home(),
     );
   }
 }
 
-// class NewNavBar extends HookWidget {
-//   final _itemSelectedCallback;
-//   NewNavBar({itemSelectedCallback})
-//       : _itemSelectedCallback = itemSelectedCallback ?? (int) {}
-//   @override
-//   Widget build(BuildContext context) {
-//     var state = useState(1);
-//     return BottomNavigationBar(
-//         onTap: (index) {
-//           state.value = index;
-//           _itemSelectedCallback(index);
-//         },
-//         currentIndex: state.value,
-//         items: const [
-//           BottomNavigationBarItem(
-//             label: "Ricks",
-//             icon: Icon(Icons.person),
-//           ),
-//           BottomNavigationBarItem(
-//               label: "Mortys", icon: Icon(Icons.location_city)),
-//           BottomNavigationBarItem(
-//               label: "Random persons", icon: Icon(Icons.shape_line))
-//         ]);
-//   }
-// }
+class NewNavBar extends HookWidget {
+  final void Function(int) itemSelectedCallback;
+
+  NewNavBar({required this.itemSelectedCallback});
+
+  @override
+  Widget build(BuildContext context) {
+    var state = useState(1);
+
+    return BottomNavigationBar(
+      onTap: (index) {
+        state.value = index;
+        itemSelectedCallback(index);
+      },
+      currentIndex: state.value,
+      items: const [
+        BottomNavigationBarItem(
+          label: "Ricks",
+          icon: Icon(Icons.person),
+        ),
+        BottomNavigationBarItem(
+          label: "Mortys",
+          icon: Icon(Icons.location_city),
+        ),
+        BottomNavigationBarItem(
+          label: "Random persons",
+          icon: Icon(Icons.shape_line),
+        ),
+      ],
+    );
+  }
+}
+
+class DataTableWidget extends StatelessWidget {
+  final List<dynamic> jsonObjects;
+  final List<String> columnNames;
+  final List<String> propertyNames;
+
+  DataTableWidget({
+    required this.jsonObjects,
+    required this.columnNames,
+    required this.propertyNames,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DataTable(
+      columns: columnNames
+          .map(
+            (name) => DataColumn(
+              label: Text(
+                name,
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+          )
+          .toList(),
+      rows: jsonObjects.map((obj) {
+        return DataRow(
+          cells: propertyNames
+              .map(
+                (propName) => DataCell(
+                  Text(obj[propName].toString()),
+                ),
+              )
+              .toList(),
+        );
+      }).toList(),
+    );
+  }
+}
 
 // essa parte do código vai para home.
 // inicio da pagina de login:
