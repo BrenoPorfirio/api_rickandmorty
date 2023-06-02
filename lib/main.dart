@@ -3,8 +3,21 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+class Character {
+  final String name;
+  final String status;
+  final String species;
+  final String imageUrl;
+
+  Character(
+      {required this.name,
+      required this.status,
+      required this.species,
+      required this.imageUrl});
+}
+
 class DataService {
-  final ValueNotifier<List<dynamic>> tableStateNotifier = ValueNotifier([]);
+  final ValueNotifier<List<Character>> tableStateNotifier = ValueNotifier([]);
 
   void carregar(int index) {
     if (index == 1) {
@@ -19,9 +32,21 @@ class DataService {
       path: 'api/character',
       queryParameters: {'size': '5'},
     );
-    var jsonString = await http.read(characterUri);
-    var chaJson = jsonDecode(jsonString);
-    tableStateNotifier.value = chaJson['results'];
+    var response = await http.get(characterUri);
+    var jsonData = jsonDecode(response.body);
+    var characterList = <Character>[];
+
+    for (var character in jsonData['results']) {
+      var c = Character(
+        name: character['name'],
+        status: character['status'],
+        species: character['species'],
+        imageUrl: character['image'],
+      );
+      characterList.add(c);
+    }
+
+    tableStateNotifier.value = characterList;
   }
 }
 
@@ -35,62 +60,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.green),
+      theme: ThemeData(primarySwatch: Colors.deepPurple),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Stack(
-          children: [
-            Container(
-              color: Colors.lightGreen[200], // Definindo a cor de fundo para um verde claro
-            ),
-            Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                    'https://i.imgur.com/ysiSp3B.png',
-                  ),
-                  fit: BoxFit.contain,
-                  opacity: 0.8,
-                ),
-              ),
-            ),
-            Container(
-              color: Colors.black.withOpacity(0.5), // Definindo a cor semitransparente de fundo
-            ),
-            Column(
-              children: [
-                AppBar(
-                  backgroundColor: Color.fromARGB(255, 127, 195, 82),
-                  title: Text(
-                    "Rick and Morty",
-                    style: TextStyle(
-                      fontFamily: 'Schwifty',
-                      fontSize: 40, // Definindo a família da fonte como Schwifty
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ValueListenableBuilder<List<dynamic>>(
-                    valueListenable: dataService.tableStateNotifier,
-                    builder: (_, value, __) {
-                      return DataTableWidget(
-                        jsonObjects: value,
-                        propertyNames: ["name", "status", "species"],
-                        columnNames: ["Nome", "Status", "Espécie"],
-                      );
-                    },
-                  ),
-                ),
-                NewNavBar(itemSelectedCallback: dataService.carregar),
-              ],
-            ),
-          ],
+        appBar: AppBar(
+          title: const Text("Dicas"),
         ),
+        body: ValueListenableBuilder<List<Character>>(
+          valueListenable: dataService.tableStateNotifier,
+          builder: (_, value, __) {
+            return DataTableWidget(jsonObjects: value);
+          },
+        ),
+        bottomNavigationBar:
+            NewNavBar(itemSelectedCallback: dataService.carregar),
       ),
     );
   }
 }
-
 
 class NewNavBar extends HookWidget {
   final void Function(int) itemSelectedCallback;
@@ -102,7 +89,6 @@ class NewNavBar extends HookWidget {
     var state = useState(1);
 
     return BottomNavigationBar(
-      backgroundColor: Color.fromARGB(255, 127, 195, 82),
       onTap: (index) {
         state.value = index;
         itemSelectedCallback(index);
@@ -127,77 +113,57 @@ class NewNavBar extends HookWidget {
 }
 
 class DataTableWidget extends StatelessWidget {
-  final List<dynamic> jsonObjects;
-  final List<String> columnNames;
-  final List<String> propertyNames;
+  final List<Character> jsonObjects;
 
-  DataTableWidget({
-    required this.jsonObjects,
-    required this.columnNames,
-    required this.propertyNames,
-  });
+  DataTableWidget({required this.jsonObjects});
 
   @override
   Widget build(BuildContext context) {
     return DataTable(
-      columns: columnNames.map(
-        (name) => DataColumn(
-          label: Stack(
-            children: [
-              Text(
-                name,
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.bold,
-                  foreground: Paint()
-                    ..style = PaintingStyle.stroke
-                    ..strokeWidth = 4
-                    ..color = Colors.black, //Color.fromARGB(255, 0, 181, 204),
-                ),
-              ),
-              Text(
-                name,
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white, //Color.fromARGB(255, 0, 181, 204),
-                ),
-              ),
-            ],
+      columns: const [
+        DataColumn(
+          label: Text(
+            "Nome",
+            style: TextStyle(fontStyle: FontStyle.italic),
           ),
         ),
-      ).toList(),
-      rows: jsonObjects.map(
-        (obj) {
-          return DataRow(
-            cells: propertyNames.map(
-              (propName) => DataCell(
-                Stack(
-                  children: [
-                    Text(
-                      obj[propName].toString(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        foreground: Paint()
-                          ..style = PaintingStyle.stroke
-                          ..strokeWidth = 4
-                          ..color = Colors.black,
-                      ),
-                    ),
-                    Text(
-                      obj[propName].toString(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ).toList(),
-          );
-        },
-      ).toList(),
+        DataColumn(
+          label: Text(
+            "Status",
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
+        ),
+        DataColumn(
+          label: Text(
+            "Espécie",
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
+        ),
+        DataColumn(
+          label: Text(
+            "Imagem",
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
+        ),
+      ],
+      rows: jsonObjects.map((character) {
+        return DataRow(
+          cells: [
+            DataCell(
+              Text(character.name),
+            ),
+            DataCell(
+              Text(character.status),
+            ),
+            DataCell(
+              Text(character.species),
+            ),
+            DataCell(
+              Image.network(character.imageUrl),
+            ),
+          ],
+        );
+      }).toList(),
     );
   }
 }
