@@ -35,28 +35,62 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.deepPurple),
+      theme: ThemeData(primarySwatch: Colors.green),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Dicas"),
+        body: Stack(
+          children: [
+            Container(
+              color: Colors.lightGreen[200], // Definindo a cor de fundo para um verde claro
+            ),
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(
+                    'https://i.imgur.com/ysiSp3B.png',
+                  ),
+                  fit: BoxFit.contain,
+                  opacity: 0.8,
+                ),
+              ),
+            ),
+            Container(
+              color: Colors.black.withOpacity(0.5), // Definindo a cor semitransparente de fundo
+            ),
+            Column(
+              children: [
+                AppBar(
+                  backgroundColor: Color.fromARGB(255, 127, 195, 82),
+                  title: Text(
+                    "Rick and Morty",
+                    style: TextStyle(
+                      fontFamily: 'Schwifty',
+                      fontSize: 40, // Definindo a família da fonte como Schwifty
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ValueListenableBuilder<List<dynamic>>(
+                    valueListenable: dataService.tableStateNotifier,
+                    builder: (_, value, __) {
+                      return DataTableWidget(
+                        jsonObjects: value,
+                        propertyNames: ["name", "status", "species"],
+                        columnNames: ["Nome", "Status", "Espécie"],
+                      );
+                    },
+                  ),
+                ),
+                NewNavBar(itemSelectedCallback: dataService.carregar),
+              ],
+            ),
+          ],
         ),
-        body: ValueListenableBuilder<List<dynamic>>(
-          valueListenable: dataService.tableStateNotifier,
-          builder: (_, value, __) {
-            return DataTableWidget(
-              jsonObjects: value,
-              propertyNames: ["name", "status", "species"],
-              columnNames: ["Nome", "Status", "Espécie"],
-            );
-          },
-        ),
-        bottomNavigationBar:
-            NewNavBar(itemSelectedCallback: dataService.carregar),
       ),
     );
   }
 }
+
 
 class NewNavBar extends HookWidget {
   final void Function(int) itemSelectedCallback;
@@ -68,6 +102,7 @@ class NewNavBar extends HookWidget {
     var state = useState(1);
 
     return BottomNavigationBar(
+      backgroundColor: Color.fromARGB(255, 127, 195, 82),
       onTap: (index) {
         state.value = index;
         itemSelectedCallback(index);
@@ -105,27 +140,64 @@ class DataTableWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DataTable(
-      columns: columnNames
-          .map(
-            (name) => DataColumn(
-              label: Text(
+      columns: columnNames.map(
+        (name) => DataColumn(
+          label: Stack(
+            children: [
+              Text(
                 name,
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-          )
-          .toList(),
-      rows: jsonObjects.map((obj) {
-        return DataRow(
-          cells: propertyNames
-              .map(
-                (propName) => DataCell(
-                  Text(obj[propName].toString()),
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold,
+                  foreground: Paint()
+                    ..style = PaintingStyle.stroke
+                    ..strokeWidth = 4
+                    ..color = Colors.black, //Color.fromARGB(255, 0, 181, 204),
                 ),
-              )
-              .toList(),
-        );
-      }).toList(),
+              ),
+              Text(
+                name,
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, //Color.fromARGB(255, 0, 181, 204),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ).toList(),
+      rows: jsonObjects.map(
+        (obj) {
+          return DataRow(
+            cells: propertyNames.map(
+              (propName) => DataCell(
+                Stack(
+                  children: [
+                    Text(
+                      obj[propName].toString(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 4
+                          ..color = Colors.black,
+                      ),
+                    ),
+                    Text(
+                      obj[propName].toString(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ).toList(),
+          );
+        },
+      ).toList(),
     );
   }
 }
