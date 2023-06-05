@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:api_rickandmorty/home/screens/ui/home.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -62,21 +63,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.deepPurple),
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Dicas"),
-        ),
-        body: SingleChildScrollView(
-          child: ValueListenableBuilder<List<Character>>(
-            valueListenable: dataService.tableStateNotifier,
-            builder: (_, value, __) {
-              return DataTableWidget(jsonObjects: value);
-            },
-          ),
-        ),
-        bottomNavigationBar:
-            NewNavBar(itemSelectedCallback: dataService.carregar),
-      ),
+      home: Home(),
     );
   }
 }
