@@ -66,11 +66,13 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Dicas"),
         ),
-        body: ValueListenableBuilder<List<Character>>(
-          valueListenable: dataService.tableStateNotifier,
-          builder: (_, value, __) {
-            return DataTableWidget(jsonObjects: value);
-          },
+        body: SingleChildScrollView(
+          child: ValueListenableBuilder<List<Character>>(
+            valueListenable: dataService.tableStateNotifier,
+            builder: (_, value, __) {
+              return DataTableWidget(jsonObjects: value);
+            },
+          ),
         ),
         bottomNavigationBar:
             NewNavBar(itemSelectedCallback: dataService.carregar),
