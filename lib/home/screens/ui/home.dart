@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:api_rickandmorty/main.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -19,6 +20,107 @@ class Home extends StatelessWidget {
       ),
       bottomNavigationBar:
           NewNavBar(itemSelectedCallback: dataService.carregar),
+    );
+  }
+}
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  String? _email;
+  String? _password;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(
+                'https://storage.stwonline.com.br/180graus/uploads/ckeditor/pictures/1723520/1-jrahv0lusxhrmy5tzeswiq.jpeg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Form(
+                key: _formKey,
+                child: Container(
+                  width: 300.0, // Defina a largura desejada aqui
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'E-mail',
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor, digite um e-mail válido';
+                            }
+                            // Adicione validações adicionais, se necessário
+                            return null;
+                          },
+                          onSaved: (value) {
+                            _email = value;
+                          },
+                        ),
+                        SizedBox(height: 20.0),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Senha',
+                          ),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor, digite uma senha válida';
+                            }
+                            // Adicione validações adicionais, se necessário
+                            return null;
+                          },
+                          onSaved: (value) {
+                            _password = value;
+                          },
+                        ),
+                        SizedBox(height: 20.0),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              // Faça a lógica de autenticação aqui
+                              // Se o login for bem-sucedido, navegue para a tela principal
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Home(),
+                                ),
+                              );
+                            }
+                          },
+                          child: Text('Entrar'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

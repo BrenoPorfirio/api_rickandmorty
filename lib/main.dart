@@ -87,7 +87,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(primarySwatch: customColor),
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: LoginPage(), // Mostrar a tela de login inicialmente
     );
   }
 }
