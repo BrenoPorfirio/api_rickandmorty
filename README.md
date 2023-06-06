@@ -27,5 +27,5 @@ Execution Instructions
 
  **Then run the project: flutter run -d C** (Choose your browser after the "-d")
 
-![rickandmorty (1)](https://github.com/BrenoPorfirio/api_rickandmorty/assets/112186428/4ab2949b-f4dd-48a3-86f5-47e919e1124b)
+![rickandmorty (2)](https://github.com/BrenoPorfirio/api_rickandmorty/assets/112186428/b6eff25e-3bba-43e8-ba60-40cb0169a418)
 
