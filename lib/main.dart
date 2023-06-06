@@ -60,8 +60,21 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    MaterialColor customColor = MaterialColor(0xFF95C25E, {
+      50: Color(0xFFF3F8E6),
+      100: Color(0xFFE3F0B2),
+      200: Color(0xFFCFE783),
+      300: Color(0xFFBBDA55),
+      400: Color(0xFFAACB31),
+      500: Color(0xFF95C25E),
+      600: Color(0xFF89B654),
+      700: Color(0xFF7CAE4B),
+      800: Color(0xFF70A642),
+      900: Color(0xFF589D30),
+    });
+
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.deepPurple),
+      theme: ThemeData(primarySwatch: customColor),
       debugShowCheckedModeBanner: false,
       home: Home(),
     );
@@ -108,51 +121,100 @@ class DataTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      columns: const [
-        DataColumn(
-          label: Text(
-            "Nome",
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ),
-        ),
-        DataColumn(
-          label: Text(
-            "Status",
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ),
-        ),
-        DataColumn(
-          label: Text(
-            "Espécie",
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ),
-        ),
-        DataColumn(
-          label: Text(
-            "Imagem",
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ),
-        ),
-      ],
-      rows: jsonObjects.map((character) {
-        return DataRow(
-          cells: [
-            DataCell(
-              Text(character.name),
+    return Center(
+      child: Container(
+        alignment: Alignment.center,
+        child: DataTable(
+          dataRowHeight: 150, // Mude o número para mudar o tamanho das linhas XD
+          columns: const [
+            DataColumn(
+              label: Center(
+                child: Text(
+                  "Nome",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-            DataCell(
-              Text(character.status),
+            DataColumn(
+              label: Center(
+                child: Text(
+                  "Status",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-            DataCell(
-              Text(character.species),
+            DataColumn(
+              label: Center(
+                child: Text(
+                  "Espécie",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-            DataCell(
-              Image.network(character.imageUrl),
+            DataColumn(
+              label: Center(
+                child: Text(
+                  "Imagem",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
           ],
-        );
-      }).toList(),
+          rows: jsonObjects.map((character) {
+            return DataRow(
+              cells: [
+                DataCell(
+                  Center(
+                    child: Text(
+                      character.name,
+                      style: TextStyle(
+                        fontSize: 21,
+                      ),
+                    ),
+                  ),
+                ),
+                DataCell(
+                  Center(
+                    child: Text(
+                      character.status,
+                      style: TextStyle(
+                        fontSize: 21,
+                      ),
+                    ),
+                  ),
+                ),
+                DataCell(
+                  Center(
+                    child: Text(
+                      character.species,
+                      style: TextStyle(
+                        fontSize: 21,
+                      ),
+                    ),
+                  ),
+                ),
+                DataCell(
+                  Center(
+                    child: Image.network(character.imageUrl),
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 }

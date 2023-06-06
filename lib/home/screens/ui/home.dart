@@ -9,7 +9,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Dicas"),
+        title: const Text("Rick And Morty API"),
       ),
       body: SingleChildScrollView(
         child: ValueListenableBuilder<List<Character>>(
