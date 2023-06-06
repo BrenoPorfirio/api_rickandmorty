@@ -4,7 +4,9 @@ https://rickandmortyapi.com
 This is a non-profit project using the following API:
 https://rickandmortyapi.com
 
-Developed by Breno Costa (https://github.com/BrenoPorfirio) Diego Alves (https://github.com/GrandeDDD) and Felippe Silva (https://github.com/uFelippeSilva)
+- Developed by Breno Costa (https://github.com/BrenoPorfirio)
+- Diego Alves (https://github.com/GrandeDDD)
+- Felippe Silva (https://github.com/uFelippeSilva)
 
 <h1 align="center">Intruções para execução:</h1>
 
@@ -13,11 +15,11 @@ Execution Instructions
 
  **Initially clone the repository:** https://github.com/BrenoPorfirio/api_rickandmorty.git
 
-- **Entra na pasta criada api_rickandmorty: cd api_rickandmorty**
+- **Entra na pasta criada: cd api_rickandmorty**
 
- **Enter the folder created api_rickandmorty: cd api_rickandmorty**
+ **Enter the folder created: cd api_rickandmorty**
 
-- **Adicione as depedências: flutter pub get**
+- **Adicione as dependências: flutter pub get**
 
  **Add dependencies: flutter pub get**
 
