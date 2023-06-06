@@ -10,15 +10,19 @@ class Character {
   final String species;
   final String imageUrl;
 
-  Character(
-      {required this.name,
-      required this.status,
-      required this.species,
-      required this.imageUrl});
+  Character({
+    required this.name,
+    required this.status,
+    required this.species,
+    required this.imageUrl,
+  });
 }
 
 class DataService {
   final ValueNotifier<List<Character>> tableStateNotifier = ValueNotifier([]);
+  int currentPage = 1;
+  int totalPages = 1;
+  int pageSize = 5;
 
   void carregar(int index) {
     if (index == 1) {
@@ -31,23 +35,30 @@ class DataService {
       scheme: 'https',
       host: 'rickandmortyapi.com',
       path: 'api/character',
-      queryParameters: {'size': '5'},
+      queryParameters: {
+        'page': currentPage.toString(),
+        'pageSize': pageSize.toString(),
+      },
     );
     var response = await http.get(characterUri);
-    var jsonData = jsonDecode(response.body);
-    var characterList = <Character>[];
 
-    for (var character in jsonData['results']) {
-      var c = Character(
-        name: character['name'],
-        status: character['status'],
-        species: character['species'],
-        imageUrl: character['image'],
-      );
-      characterList.add(c);
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      totalPages = jsonData['info']['pages'];
+      var characterList = <Character>[];
+
+      for (var character in jsonData['results']) {
+        var c = Character(
+          name: character['name'],
+          status: character['status'],
+          species: character['species'],
+          imageUrl: character['image'],
+        );
+        characterList.add(c);
+      }
+
+      tableStateNotifier.value = characterList;
     }
-
-    tableStateNotifier.value = characterList;
   }
 }
 
@@ -81,39 +92,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class NewNavBar extends HookWidget {
-  final void Function(int) itemSelectedCallback;
-
-  NewNavBar({required this.itemSelectedCallback});
-
-  @override
-  Widget build(BuildContext context) {
-    var state = useState(1);
-
-    return BottomNavigationBar(
-      onTap: (index) {
-        state.value = index;
-        itemSelectedCallback(index);
-      },
-      currentIndex: state.value,
-      items: const [
-        BottomNavigationBarItem(
-          label: "Ricks",
-          icon: Icon(Icons.person),
-        ),
-        BottomNavigationBarItem(
-          label: "Mortys",
-          icon: Icon(Icons.location_city),
-        ),
-        BottomNavigationBarItem(
-          label: "Random persons",
-          icon: Icon(Icons.shape_line),
-        ),
-      ],
-    );
-  }
-}
-
 class DataTableWidget extends StatelessWidget {
   final List<Character> jsonObjects;
 
@@ -121,222 +99,53 @@ class DataTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        alignment: Alignment.center,
-        child: DataTable(
-          dataRowHeight: 150, // Mude o número para mudar o tamanho das linhas XD
-          columns: const [
-            DataColumn(
-              label: Center(
-                child: Text(
-                  "Nome",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            itemCount: jsonObjects.length,
+            itemBuilder: (context, index) {
+              var character = jsonObjects[index];
+              return ListTile(
+                leading: Image.network(character.imageUrl),
+                title: Text(character.name),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Status: ${character.status}"),
+                    Text("Espécie: ${character.species}"),
+                  ],
                 ),
-              ),
+              );
+            },
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                if (dataService.currentPage > 1) {
+                  dataService.currentPage--;
+                  dataService.carregarDados();
+                }
+              },
+              child: Icon(Icons.arrow_back),
             ),
-            DataColumn(
-              label: Center(
-                child: Text(
-                  "Status",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            DataColumn(
-              label: Center(
-                child: Text(
-                  "Espécie",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            DataColumn(
-              label: Center(
-                child: Text(
-                  "Imagem",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+            Text(
+                'Página ${dataService.currentPage} de ${dataService.totalPages}'),
+            ElevatedButton(
+              onPressed: () {
+                if (dataService.currentPage < dataService.totalPages) {
+                  dataService.currentPage++;
+                  dataService.carregarDados();
+                }
+              },
+              child: Icon(Icons.arrow_forward),
             ),
           ],
-          rows: jsonObjects.map((character) {
-            return DataRow(
-              cells: [
-                DataCell(
-                  Center(
-                    child: Text(
-                      character.name,
-                      style: TextStyle(
-                        fontSize: 21,
-                      ),
-                    ),
-                  ),
-                ),
-                DataCell(
-                  Center(
-                    child: Text(
-                      character.status,
-                      style: TextStyle(
-                        fontSize: 21,
-                      ),
-                    ),
-                  ),
-                ),
-                DataCell(
-                  Center(
-                    child: Text(
-                      character.species,
-                      style: TextStyle(
-                        fontSize: 21,
-                      ),
-                    ),
-                  ),
-                ),
-                DataCell(
-                  Center(
-                    child: Image.network(character.imageUrl),
-                  ),
-                ),
-              ],
-            );
-          }).toList(),
         ),
-      ),
+      ],
     );
   }
 }
-
-// essa parte do código vai para home.
-// inicio da pagina de login:
-
-//       body: Stack(
-//         children: [
-//           Positioned.fill(
-//             child: Image.network(
-//               'https://i0.wp.com/cloud.estacaonerd.com/wp-content/uploads/2018/05/10153353/RickAndMortyFeature.jpg?fit=1000%2C500&ssl=1', // URL da imagem desejada
-//               fit: BoxFit.cover,
-//             ),
-//           ),
-//           Padding(
-//             padding: EdgeInsets.all(16.0),
-//             child: Center(
-//               child: LoginForm(),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-// class LoginForm extends StatefulWidget {
-//   @override
-//   _LoginFormState createState() => _LoginFormState();
-// }
-
-// class _LoginFormState extends State<LoginForm> {
-//   final _formKey = GlobalKey<FormState>();
-//   String? _email;
-//   String? _password;
-
-//   void _submitForm() {
-//     if (_formKey.currentState?.validate() == true) {
-//       _formKey.currentState?.save();
-//       if (_email == 'user@example.com' && _password == 'password') {
-//         // Se as credenciais estiverem corretas, você pode prosseguir para a próxima tela ou executar a lógica desejada
-//         // Exemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
-//         print('Login bem-sucedido');
-//       } else {
-//         // Se as credenciais estiverem incorretas, você pode exibir uma mensagem de erro
-//         print('Credenciais inválidas');
-//       }
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       constraints: BoxConstraints(
-//           maxWidth: 400), // Definindo um tamanho máximo para o container
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(
-//             10.0), // Define o formato arredondado do formulário
-//       ),
-//       padding: EdgeInsets.all(16.0),
-//       child: Form(
-//         key: _formKey,
-//         child: Column(
-//           mainAxisSize:
-//               MainAxisSize.min, // Reduz o espaço vertical ocupado pela coluna
-//           children: [
-//             TextFormField(
-//               style: TextStyle(
-//                   color: Colors.black), // Define a cor preta para o texto
-//               decoration: InputDecoration(
-//                 labelText: 'E-mail',
-//                 labelStyle: TextStyle(
-//                     color: Colors
-//                         .black), // Define a cor preta para o texto do rótulo
-//               ),
-//               keyboardType: TextInputType.emailAddress,
-//               validator: (value) {
-//                 if (value?.isEmpty == true) {
-//                   return 'Por favor, insira um e-mail válido';
-//                 }
-//                 return null;
-//               },
-//               onSaved: (value) {
-//                 _email = value ?? '';
-//               },
-//             ),
-//             TextFormField(
-//               style: TextStyle(
-//                   color: Colors.black), // Define a cor preta para o texto
-//               decoration: InputDecoration(
-//                 labelText: 'Senha',
-//                 labelStyle: TextStyle(
-//                     color: Colors
-//                         .black), // Define a cor preta para o texto do rótulo
-//               ),
-//               obscureText: true,
-//               validator: (value) {
-//                 if (value?.isEmpty == true) {
-//                   return 'Por favor, insira uma senha';
-//                 }
-//                 return null;
-//               },
-//               onSaved: (value) {
-//                 _password = value;
-//               },
-//             ),
-//             SizedBox(height: 16.0),
-//             ElevatedButton(
-//               style: ElevatedButton.styleFrom(
-//                 primary: Colors.green, // Define a cor para o botão "Entrar"
-//               ),
-//               onPressed: _submitForm,
-//               child: Text(
-//                 'Entrar',
-//                 style: TextStyle(color: Colors.white),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

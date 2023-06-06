@@ -3,21 +3,19 @@ import 'package:api_rickandmorty/main.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class Home extends StatelessWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Rick And Morty API"),
+        title: const Text("Dicas"),
       ),
-      body: SingleChildScrollView(
-        child: ValueListenableBuilder<List<Character>>(
-          valueListenable: dataService.tableStateNotifier,
-          builder: (_, value, __) {
-            return DataTableWidget(jsonObjects: value);
-          },
-        ),
+      body: ValueListenableBuilder<List<Character>>(
+        valueListenable: dataService.tableStateNotifier,
+        builder: (_, value, __) {
+          return DataTableWidget(jsonObjects: value);
+        },
       ),
       bottomNavigationBar:
           NewNavBar(itemSelectedCallback: dataService.carregar),
