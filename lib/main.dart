@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:api_rickandmorty/home/screens/ui/home.dart';
+import 'package:api_rickandmorty/home/screens/ui/character_details.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -87,7 +88,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class DarkModeButtonWrapper extends HookWidget {
   final Widget child;
 
@@ -109,7 +109,8 @@ class DarkModeButtonWrapper extends HookWidget {
           title: const Text('Dicas'),
           actions: [
             IconButton(
-              icon: Icon(isDarkMode.value ? Icons.wb_sunny : Icons.nightlight_round),
+              icon: Icon(
+                  isDarkMode.value ? Icons.wb_sunny : Icons.nightlight_round),
               onPressed: toggleDarkMode,
             ),
           ],
@@ -134,15 +135,26 @@ class DataTableWidget extends StatelessWidget {
             itemCount: jsonObjects.length,
             itemBuilder: (context, index) {
               var character = jsonObjects[index];
-              return ListTile(
-                leading: Image.network(character.imageUrl),
-                title: Text(character.name),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Status: ${character.status}"),
-                    Text("Espécie: ${character.species}"),
-                  ],
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CharacterDetails(character: character),
+                    ),
+                  );
+                },
+                child: ListTile(
+                  leading: Image.network(character.imageUrl),
+                  title: Text(character.name),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Status: ${character.status}"),
+                      Text("Species: ${character.species}"),
+                    ],
+                  ),
                 ),
               );
             },

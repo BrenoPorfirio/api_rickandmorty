@@ -125,7 +125,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-
 class NewNavBar extends HookWidget {
   final void Function(int) itemSelectedCallback;
 
