@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Container(
                   width: 300.0, // Defina a largura desejada aqui
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Padding(
@@ -124,6 +124,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
 
 class NewNavBar extends HookWidget {
   final void Function(int) itemSelectedCallback;

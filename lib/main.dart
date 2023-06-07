@@ -71,23 +71,51 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    MaterialColor customColor = MaterialColor(0xFF95C25E, {
-      50: Color(0xFFF3F8E6),
-      100: Color(0xFFE3F0B2),
-      200: Color(0xFFCFE783),
-      300: Color(0xFFBBDA55),
-      400: Color(0xFFAACB31),
-      500: Color(0xFF95C25E),
-      600: Color(0xFF89B654),
-      700: Color(0xFF7CAE4B),
-      800: Color(0xFF70A642),
-      900: Color(0xFF589D30),
-    });
+    return MaterialApp(
+      theme: ThemeData.light(), // Tema inicial claro
+      darkTheme: ThemeData.dark(), // Tema escuro
+      debugShowCheckedModeBanner: false,
+      home: DarkModeButtonWrapper(
+        child: Builder(
+          builder: (context) {
+            // Use Builder para envolver apenas a parte que precisa ser reconstruída
+            return LoginPage(); // Mostrar a tela de login inicialmente
+          },
+        ),
+      ),
+    );
+  }
+}
+
+
+class DarkModeButtonWrapper extends HookWidget {
+  final Widget child;
+
+  DarkModeButtonWrapper({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = useState(false);
+
+    void toggleDarkMode() {
+      isDarkMode.value = !isDarkMode.value;
+    }
 
     return MaterialApp(
-      theme: ThemeData(primarySwatch: customColor),
+      theme: isDarkMode.value ? ThemeData.dark() : ThemeData.light(),
       debugShowCheckedModeBanner: false,
-      home: LoginPage(), // Mostrar a tela de login inicialmente
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Dicas'),
+          actions: [
+            IconButton(
+              icon: Icon(isDarkMode.value ? Icons.wb_sunny : Icons.nightlight_round),
+              onPressed: toggleDarkMode,
+            ),
+          ],
+        ),
+        body: child,
+      ),
     );
   }
 }
@@ -133,7 +161,8 @@ class DataTableWidget extends StatelessWidget {
               child: Icon(Icons.arrow_back),
             ),
             Text(
-                'Página ${dataService.currentPage} de ${dataService.totalPages}'),
+              'Página ${dataService.currentPage} de ${dataService.totalPages}',
+            ),
             ElevatedButton(
               onPressed: () {
                 if (dataService.currentPage < dataService.totalPages) {
