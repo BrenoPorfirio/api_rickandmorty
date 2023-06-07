@@ -12,15 +12,38 @@ class CharacterDetails extends StatelessWidget {
       appBar: AppBar(
         title: Text(character.name),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            Image.network(character.imageUrl),
-            Text("Name: ${character.name}"),
-            Text("Status: ${character.status}"),
-            Text("Species: ${character.species}"),
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.network(
+            character.imageUrl,
+            width: 200,
+          ),
+          SizedBox(height: 16),
+          Text(
+            "Name: ${character.name}",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            "Id: ${character.id}",
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(height: 8),
+          Text(
+            "Status: ${character.status}",
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(height: 8),
+          Text(
+            "Species: ${character.species}",
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
       ),
     );
   }

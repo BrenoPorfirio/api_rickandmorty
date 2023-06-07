@@ -142,11 +142,11 @@ class NewNavBar extends HookWidget {
       currentIndex: state.value,
       items: const [
         BottomNavigationBarItem(
-          label: "Ricks",
+          label: "Pesquisa",
           icon: Icon(Icons.person),
         ),
         BottomNavigationBarItem(
-          label: "Mortys",
+          label: "Personagens",
           icon: Icon(Icons.location_city),
         ),
         BottomNavigationBarItem(

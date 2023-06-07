@@ -7,12 +7,14 @@ import 'dart:convert';
 
 class Character {
   final String name;
+  final int id;
   final String status;
   final String species;
   final String imageUrl;
 
   Character({
     required this.name,
+    required this.id,
     required this.status,
     required this.species,
     required this.imageUrl,
@@ -51,6 +53,7 @@ class DataService {
       for (var character in jsonData['results']) {
         var c = Character(
           name: character['name'],
+          id: character['id'],
           status: character['status'],
           species: character['species'],
           imageUrl: character['image'],
@@ -145,14 +148,41 @@ class DataTableWidget extends StatelessWidget {
                     ),
                   );
                 },
-                child: ListTile(
-                  leading: Image.network(character.imageUrl),
-                  title: Text(character.name),
-                  subtitle: Column(
+                child: Container(
+                  height: 100, // Defina a altura da linha aqui
+                  padding: EdgeInsets.all(8),
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Status: ${character.status}"),
-                      Text("Species: ${character.species}"),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          character.imageUrl,
+                          width: 100, // Defina a largura da imagem aqui
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              character.name,
+                              style: TextStyle(
+                                fontSize:
+                                    18, // Ajuste o tamanho do texto conforme necessário
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Id: ${character.id}",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
