@@ -72,25 +72,32 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = useState(false);
+
     return MaterialApp(
-      theme: ThemeData.light(), // Tema inicial claro
-      darkTheme: ThemeData.dark(), // Tema escuro
+      theme: isDarkMode.value ? ThemeData.dark() : ThemeData.light(),
       debugShowCheckedModeBanner: false,
-      home: DarkModeButtonWrapper(
-        child: Builder(
-          builder: (context) {
-            // Use Builder para envolver apenas a parte que precisa ser reconstruída
-            return LoginPage(); // Mostrar a tela de login inicialmente
-          },
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Dicas'),
+          actions: [
+            IconButton(
+              icon: Icon(
+                  isDarkMode.value ? Icons.wb_sunny : Icons.nightlight_round),
+              onPressed: () => isDarkMode.value = !isDarkMode.value,
+            ),
+          ],
         ),
+        body: LoginPage(),
       ),
     );
   }
 }
 
+/*
 class DarkModeButtonWrapper extends HookWidget {
   final Widget child;
 
@@ -123,6 +130,7 @@ class DarkModeButtonWrapper extends HookWidget {
     );
   }
 }
+*/
 
 class DataTableWidget extends StatelessWidget {
   final List<Character> jsonObjects;
@@ -138,52 +146,55 @@ class DataTableWidget extends StatelessWidget {
             itemCount: jsonObjects.length,
             itemBuilder: (context, index) {
               var character = jsonObjects[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          CharacterDetails(character: character),
-                    ),
-                  );
-                },
-                child: Container(
-                  height: 100, // Defina a altura da linha aqui
-                  padding: EdgeInsets.all(8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          character.imageUrl,
-                          width: 100, // Defina a largura da imagem aqui
-                          fit: BoxFit.cover,
-                        ),
+              return MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CharacterDetails(character: character),
                       ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              character.name,
-                              style: TextStyle(
-                                fontSize:
-                                    18, // Ajuste o tamanho do texto conforme necessário
-                                fontWeight: FontWeight.bold,
+                    );
+                  },
+                  child: Container(
+                    height: 100, // Defina a altura da linha aqui
+                    padding: EdgeInsets.all(8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            character.imageUrl,
+                            width: 100, // Defina a largura da imagem aqui
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                character.name,
+                                style: TextStyle(
+                                  fontSize:
+                                      18, // Ajuste o tamanho do texto conforme necessário
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              "Id: ${character.id}",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
+                              SizedBox(height: 4),
+                              Text(
+                                "Id: ${character.id}",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
