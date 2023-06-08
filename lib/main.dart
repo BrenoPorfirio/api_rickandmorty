@@ -9,6 +9,7 @@ class Character {
   final String name;
   final int id;
   final String status;
+  final String gender;
   final String species;
   final String imageUrl;
 
@@ -16,6 +17,7 @@ class Character {
     required this.name,
     required this.id,
     required this.status,
+    required this.gender,
     required this.species,
     required this.imageUrl,
   });
@@ -55,6 +57,7 @@ class DataService {
           name: character['name'],
           id: character['id'],
           status: character['status'],
+          gender: character['gender'],
           species: character['species'],
           imageUrl: character['image'],
         );
@@ -76,13 +79,12 @@ class MyApp extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = useState(false);
-
     return MaterialApp(
       theme: isDarkMode.value ? ThemeData.dark() : ThemeData.light(),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Dicas'),
+          title: const Text("PÁGiNA DE LOGIN"),
           actions: [
             IconButton(
               icon: Icon(

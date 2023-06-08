@@ -10,7 +10,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Dicas"),
+        title: const Text("API RICK AND MORTY"),
       ),
       body: ValueListenableBuilder<List<Character>>(
         valueListenable: dataService.tableStateNotifier,
