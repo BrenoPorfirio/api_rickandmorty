@@ -19,7 +19,7 @@ class Home extends StatelessWidget {
         },
       ),
       bottomNavigationBar:
-          NewNavBar(itemSelectedCallback: dataService.carregar),
+          NewNavBar(itemSelectedCallback: (index) => dataService.carregar(index, context)),
     );
   }
 }

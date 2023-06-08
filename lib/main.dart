@@ -4,6 +4,7 @@ import 'package:api_rickandmorty/home/screens/ui/home.dart';
 import 'package:api_rickandmorty/home/screens/ui/character_details.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:math';
 
 class Character {
   final String name;
@@ -29,9 +30,11 @@ class DataService {
   int totalPages = 1;
   int pageSize = 5;
 
-  void carregar(int index) {
+  void carregar(int index, BuildContext context) {
     if (index == 1) {
       carregarDados();
+    } else if (index == 2) {
+      carregarPersonagemAleatorio(context);
     }
   }
 
@@ -67,6 +70,36 @@ class DataService {
       tableStateNotifier.value = characterList;
     }
   }
+
+  Future<void> carregarPersonagemAleatorio(BuildContext context) async {
+    Random random = new Random();
+    int randomId = random.nextInt(826) + 1;
+    var characterUri = Uri(
+      scheme: 'https',
+      host: 'rickandmortyapi.com',
+      path: 'api/character/$randomId',
+    );
+    var response = await http.get(characterUri);
+
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      var character = Character(
+        name: jsonData['name'],
+        id: jsonData['id'],
+        status: jsonData['status'],
+        gender: jsonData['gender'],
+        species: jsonData['species'],
+        imageUrl: jsonData['image'],
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CharacterDetails(character: character),
+        ),
+      );
+    }
+  }
 }
 
 final dataService = DataService();
@@ -98,41 +131,6 @@ class MyApp extends HookWidget {
     );
   }
 }
-
-/*
-class DarkModeButtonWrapper extends HookWidget {
-  final Widget child;
-
-  DarkModeButtonWrapper({required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDarkMode = useState(false);
-
-    void toggleDarkMode() {
-      isDarkMode.value = !isDarkMode.value;
-    }
-
-    return MaterialApp(
-      theme: isDarkMode.value ? ThemeData.dark() : ThemeData.light(),
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Dicas'),
-          actions: [
-            IconButton(
-              icon: Icon(
-                  isDarkMode.value ? Icons.wb_sunny : Icons.nightlight_round),
-              onPressed: toggleDarkMode,
-            ),
-          ],
-        ),
-        body: child,
-      ),
-    );
-  }
-}
-*/
 
 class DataTableWidget extends StatelessWidget {
   final List<Character> jsonObjects;
