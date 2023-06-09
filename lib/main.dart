@@ -35,6 +35,52 @@ class DataService {
       carregarDados();
     } else if (index == 2) {
       carregarPersonagemAleatorio(context);
+    } else if (index == 0) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          int? selectedId;
+          return AlertDialog(
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            title: Text('Digite o ID do personagem:'),
+            content: TextFormField(
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                selectedId = int.tryParse(value);
+              },
+              decoration: InputDecoration(
+                labelText: ('Entre 1 a 826'),
+                prefixIcon: Icon(Icons.search),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (selectedId != null) {
+                    carregarPorId(selectedId!, context);
+                    Navigator.pop(context);
+                  }
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text('Buscar'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -78,6 +124,34 @@ class DataService {
       scheme: 'https',
       host: 'rickandmortyapi.com',
       path: 'api/character/$randomId',
+    );
+    var response = await http.get(characterUri);
+
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      var character = Character(
+        name: jsonData['name'],
+        id: jsonData['id'],
+        status: jsonData['status'],
+        gender: jsonData['gender'],
+        species: jsonData['species'],
+        imageUrl: jsonData['image'],
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CharacterDetails(character: character),
+        ),
+      );
+    }
+  }
+
+  Future<void> carregarPorId(int id, BuildContext context) async {
+    var characterUri = Uri(
+      scheme: 'https',
+      host: 'rickandmortyapi.com',
+      path: 'api/character/$id',
     );
     var response = await http.get(characterUri);
 

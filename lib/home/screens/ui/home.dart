@@ -18,8 +18,9 @@ class Home extends StatelessWidget {
           return DataTableWidget(jsonObjects: value);
         },
       ),
-      bottomNavigationBar:
-          NewNavBar(itemSelectedCallback: (index) => dataService.carregar(index, context)),
+      bottomNavigationBar: NewNavBar(
+          itemSelectedCallback: (index) =>
+              dataService.carregar(index, context)),
     );
   }
 }
@@ -143,15 +144,15 @@ class NewNavBar extends HookWidget {
       items: const [
         BottomNavigationBarItem(
           label: "Pesquisa",
-          icon: Icon(Icons.person),
+          icon: Icon(Icons.search),
         ),
         BottomNavigationBarItem(
           label: "Personagens",
-          icon: Icon(Icons.location_city),
+          icon: Icon(Icons.person_4),
         ),
         BottomNavigationBarItem(
           label: "Random persons",
-          icon: Icon(Icons.shape_line),
+          icon: Icon(Icons.book),
         ),
       ],
     );
