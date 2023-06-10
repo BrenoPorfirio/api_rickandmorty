@@ -10,7 +10,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("API RICK AND MORTY"),
+        title: const Text("API RICK AND MORTY", style: TextStyle(fontFamily: 'Schwifty', fontSize: 30),),
       ),
       body: ValueListenableBuilder<List<Character>>(
         valueListenable: dataService.tableStateNotifier,
@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: NetworkImage(
-                'https://storage.stwonline.com.br/180graus/uploads/ckeditor/pictures/1723520/1-jrahv0lusxhrmy5tzeswiq.jpeg'),
+                'https://i.imgur.com/f9p6S5j.jpg'),
             fit: BoxFit.cover,
           ),
         ),

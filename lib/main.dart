@@ -191,7 +191,7 @@ class MyApp extends HookWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text("PÁGiNA DE LOGIN"),
+          title: const Text("PAGINA DE LOGIN", style: TextStyle(fontFamily: 'Schwifty', fontSize: 30),),
           actions: [
             IconButton(
               icon: Icon(
@@ -213,95 +213,116 @@ class DataTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            itemCount: jsonObjects.length,
-            itemBuilder: (context, index) {
-              var character = jsonObjects[index];
-              return MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CharacterDetails(character: character),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    height: 100, // Defina a altura da linha aqui
-                    padding: EdgeInsets.all(8),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            character.imageUrl,
-                            width: 100, // Defina a largura da imagem aqui
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                character.name,
-                                style: TextStyle(
-                                  fontSize:
-                                      18, // Ajuste o tamanho do texto conforme necessário
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                "Id: ${character.id}",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                if (dataService.currentPage > 1) {
-                  dataService.currentPage--;
-                  dataService.carregarDados();
-                }
-              },
-              child: Icon(Icons.arrow_back),
-            ),
-            Text(
-              'Página ${dataService.currentPage} de ${dataService.totalPages}',
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (dataService.currentPage < dataService.totalPages) {
-                  dataService.currentPage++;
-                  dataService.carregarDados();
-                }
-              },
-              child: Icon(Icons.arrow_forward),
-            ),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Color.fromARGB(110, 144, 255, 17),
+            Colors.black,
           ],
         ),
-      ],
+        image: DecorationImage(
+          image: NetworkImage(
+            'https://i.imgur.com/gUttWci.jpg',
+          ),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+            Colors.black.withOpacity(0.3),
+            BlendMode.dstATop,
+          ),
+        ),
+      ),
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: jsonObjects.length,
+              itemBuilder: (context, index) {
+                var character = jsonObjects[index];
+                return MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CharacterDetails(character: character),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 150,
+                      padding: EdgeInsets.all(8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              character.imageUrl,
+                              width: 150,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  character.name,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  "Id: ${character.id}",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  if (dataService.currentPage > 1) {
+                    dataService.currentPage--;
+                    dataService.carregarDados();
+                  }
+                },
+                child: Icon(Icons.arrow_back),
+              ),
+              Text(
+                'Página ${dataService.currentPage} de ${dataService.totalPages}',
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (dataService.currentPage < dataService.totalPages) {
+                    dataService.currentPage++;
+                    dataService.carregarDados();
+                  }
+                },
+                child: Icon(Icons.arrow_forward),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
