@@ -59,8 +59,8 @@ class DataService {
                   Navigator.pop(context);
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).elevatedButtonTheme.style?.backgroundColor?.resolve({MaterialState.disabled}), // Cor do botão
+                  foregroundColor: Colors.white, // Cor do texto
                 ),
                 child: Text('Cancelar'),
               ),
@@ -72,8 +72,8 @@ class DataService {
                   }
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).elevatedButtonTheme.style?.backgroundColor?.resolve({MaterialState.disabled}), // Cor do botão
+                  foregroundColor: Colors.white, // Cor do texto
                 ),
                 child: Text('Buscar'),
               ),
@@ -187,15 +187,19 @@ class MyApp extends HookWidget {
   Widget build(BuildContext context) {
     final isDarkMode = useState(false);
     return MaterialApp(
-      theme: isDarkMode.value ? ThemeData.dark() : ThemeData.light(),
+      theme: isDarkMode.value ? _buildDarkTheme() : _buildLightTheme(),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text("PAGINA DE LOGIN", style: TextStyle(fontFamily: 'Schwifty', fontSize: 30),),
+          title: const Text(
+            "PAGINA DE LOGIN",
+            style: TextStyle(fontFamily: 'Schwifty', fontSize: 30),
+          ),
           actions: [
             IconButton(
               icon: Icon(
-                  isDarkMode.value ? Icons.wb_sunny : Icons.nightlight_round),
+                isDarkMode.value ? Icons.wb_sunny : Icons.nightlight_round,
+              ),
               onPressed: () => isDarkMode.value = !isDarkMode.value,
             ),
           ],
@@ -204,7 +208,36 @@ class MyApp extends HookWidget {
       ),
     );
   }
+
+  ThemeData _buildLightTheme() {
+    return ThemeData.light().copyWith(
+      primaryColor: Colors.green, // Defina a cor verde como a cor primária
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.green, // Cor de fundo da AppBar
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.green[900]), // verde escuro para o tema claro
+        ),
+      ),
+    );
+  }
+
+  ThemeData _buildDarkTheme() {
+    return ThemeData.dark().copyWith(
+      primaryColor: Colors.green[900], // Defina a cor verde escuro como a cor primária
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.green[900], // Cor de fundo da AppBar
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.lightGreen), // verde claro para o tema escuro
+        ),
+      ),
+    );
+  }
 }
+
 
 class DataTableWidget extends StatelessWidget {
   final List<Character> jsonObjects;
@@ -225,11 +258,11 @@ class DataTableWidget extends StatelessWidget {
         ),
         image: DecorationImage(
           image: NetworkImage(
-            'https://i.imgur.com/gUttWci.jpg',
+            'https://i.imgur.com/wzTOVTZ.jpg',
           ),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
-            Colors.black.withOpacity(0.3),
+            Colors.black.withOpacity(0.75),
             BlendMode.dstATop,
           ),
         ),

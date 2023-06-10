@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: NetworkImage(
-                'https://i.imgur.com/f9p6S5j.jpg'),
+                'https://i.redd.it/uy470gozpt2b1.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -134,8 +134,12 @@ class NewNavBar extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var state = useState(1);
+    var isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return BottomNavigationBar(
+      backgroundColor: Theme.of(context).primaryColor,
+      unselectedItemColor: isDarkMode ? Colors.lightGreen : Colors.green[900], // verde claro para o tema escuro, verde escuro para o tema claro
+      selectedItemColor: isDarkMode ? Colors.white : Colors.white, // verde claro para o tema escuro, verde escuro para o tema claro
       onTap: (index) {
         state.value = index;
         itemSelectedCallback(index);

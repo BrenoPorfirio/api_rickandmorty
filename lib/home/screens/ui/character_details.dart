@@ -18,7 +18,7 @@ class CharacterDetails extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage('https://i.imgur.com/fkUlvdg.jpg'),
+            image: NetworkImage('https://i.imgur.com/F3ZSwn3.jpg'),
             fit: BoxFit.cover,
           ),
         ),
