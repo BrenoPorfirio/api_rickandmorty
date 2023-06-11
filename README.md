@@ -27,5 +27,9 @@ Execution Instructions
 
  **Then run the project: flutter run -d C** (Choose your browser after the "-d")
 
+- **Após compilar o código a uma pequena validação na página de login onde não se pode por caracteres especiais.**
+
+**After compiling the code there is a small validation on the login page where special characters cannot be entered.**
+
 ![rickandmorty (2)](https://github.com/BrenoPorfirio/api_rickandmorty/assets/112186428/b6eff25e-3bba-43e8-ba60-40cb0169a418)
 
