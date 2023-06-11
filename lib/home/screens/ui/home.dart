@@ -4,13 +4,16 @@ import 'package:api_rickandmorty/main.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  const Home({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("API RICK AND MORTY", style: TextStyle(fontFamily: 'Schwifty', fontSize: 30),),
+        title: const Text(
+          "API RICK AND MORTY",
+          style: TextStyle(fontFamily: 'Schwifty', fontSize: 30),
+        ),
       ),
       body: ValueListenableBuilder<List<Character>>(
         valueListenable: dataService.tableStateNotifier,
@@ -19,8 +22,8 @@ class Home extends StatelessWidget {
         },
       ),
       bottomNavigationBar: NewNavBar(
-          itemSelectedCallback: (index) =>
-              dataService.carregar(index, context)),
+        itemSelectedCallback: (index) => dataService.carregar(index, context),
+      ),
     );
   }
 }
@@ -41,8 +44,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(
-                'https://i.redd.it/uy470gozpt2b1.jpg'),
+            image: NetworkImage('https://i.imgur.com/f9p6S5j.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -72,7 +74,14 @@ class _LoginPageState extends State<LoginPage> {
                             if (value == null || value.isEmpty) {
                               return 'Por favor, digite um e-mail válido';
                             }
-                            // Adicione validações adicionais, se necessário
+
+                            // Verifica o formato do email usando uma expressão regular
+                            final emailRegex = RegExp(
+                                r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+                            if (!emailRegex.hasMatch(value)) {
+                              return 'Por favor, digite um e-mail válido';
+                            }
+
                             return null;
                           },
                           onSaved: (value) {
@@ -89,7 +98,14 @@ class _LoginPageState extends State<LoginPage> {
                             if (value == null || value.isEmpty) {
                               return 'Por favor, digite uma senha válida';
                             }
-                            // Adicione validações adicionais, se necessário
+
+                            // Verifica se a senha tem no mínimo 6 caracteres
+                            if (value.length < 6) {
+                              return 'A senha deve ter no mínimo 6 caracteres';
+                            }
+
+                            // Adicione outras validações adicionais, se necessário
+
                             return null;
                           },
                           onSaved: (value) {
@@ -134,12 +150,8 @@ class NewNavBar extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var state = useState(1);
-    var isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return BottomNavigationBar(
-      backgroundColor: Theme.of(context).primaryColor,
-      unselectedItemColor: isDarkMode ? Colors.lightGreen : Colors.green[900], // verde claro para o tema escuro, verde escuro para o tema claro
-      selectedItemColor: isDarkMode ? Colors.white : Colors.white, // verde claro para o tema escuro, verde escuro para o tema claro
       onTap: (index) {
         state.value = index;
         itemSelectedCallback(index);
