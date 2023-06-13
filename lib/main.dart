@@ -34,11 +34,20 @@ class DataService {
     if (index == 1) {
       carregarDados();
     } else if (index == 2) {
-      carregarPersonagemAleatorio(context);
+      carregarPersonagemAleatorio().then((character) {
+        if (character != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CharacterDetails(character: character),
+            ),
+          );
+        }
+      });
     } else if (index == 0) {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder: (BuildContext dialogContext) {
           int? selectedId;
           return AlertDialog(
             contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -56,7 +65,7 @@ class DataService {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(dialogContext);
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: Theme.of(context).elevatedButtonTheme.style?.backgroundColor?.resolve({MaterialState.disabled}), // Cor do botão
@@ -67,8 +76,17 @@ class DataService {
               TextButton(
                 onPressed: () {
                   if (selectedId != null) {
-                    carregarPorId(selectedId!, context);
-                    Navigator.pop(context);
+                    Navigator.pop(dialogContext);
+                    carregarPorId(selectedId!, context).then((character) {
+                      if (character != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CharacterDetails(character: character),
+                          ),
+                        );
+                      }
+                    });
                   }
                 },
                 style: TextButton.styleFrom(
@@ -117,7 +135,7 @@ class DataService {
     }
   }
 
-  Future<void> carregarPersonagemAleatorio(BuildContext context) async {
+  Future<Character?> carregarPersonagemAleatorio() async {
     Random random = new Random();
     int randomId = random.nextInt(826) + 1;
     var characterUri = Uri(
@@ -138,16 +156,13 @@ class DataService {
         imageUrl: jsonData['image'],
       );
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CharacterDetails(character: character),
-        ),
-      );
+      return character;
     }
+
+    return null;
   }
 
-  Future<void> carregarPorId(int id, BuildContext context) async {
+  Future<Character?> carregarPorId(int id, BuildContext context) async {
     var characterUri = Uri(
       scheme: 'https',
       host: 'rickandmortyapi.com',
@@ -166,13 +181,10 @@ class DataService {
         imageUrl: jsonData['image'],
       );
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CharacterDetails(character: character),
-        ),
-      );
+      return character;
     }
+
+    return null;
   }
 }
 
@@ -237,7 +249,6 @@ class MyApp extends HookWidget {
     );
   }
 }
-
 
 class DataTableWidget extends StatelessWidget {
   final List<Character> jsonObjects;
